@@ -11,7 +11,7 @@ data Exp = Var X
 type X = String
 type K = String
 
-data B = Rama K [X] Exp
+type B = (K, [X], Exp)
 
 -- 2
 
@@ -47,8 +47,8 @@ efecto (Rec x e) sigma =
     Rec x (efecto e (bajas [x] sigma))
 
 efectoRamas :: B -> Sustitucion -> B
-efectoRamas (Rama k xs e) sigma =
-    Rama k xs (efecto e (bajas xs sigma))
+efectoRamas (k, xs, e) sigma =
+    (k, xs, (efecto e (bajas xs sigma)))
 
 busqueda:: X -> Sustitucion -> Exp
 busqueda x [] = Var x
@@ -72,7 +72,16 @@ Por ejemplo, la expresión x y la tabla [x, y := y, z]:
 -- Ej 5 --
 
 evalParcial :: Exp -> Weak
-evalParcial = undefined
+
+evalParcial (Cons k es) = ConstanteW k es
+
+evalParcial (Func x es) = FuncionW x es
+
+evalParcial (Apl e1 e2) = undefined
+
+evalParcial (Case e b) = undefined
+
+evalParcial (Rec x e) = undefined
 
 
 -- Ej 6 --
