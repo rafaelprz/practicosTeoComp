@@ -60,6 +60,15 @@ bajas:: [X] -> Sustitucion -> Sustitucion
 bajas xs sigma =
     (filter (\(x,_) -> not (x `elem` xs)) sigma)
 
+
+buscarRama :: K -> [B] -> B
+buscarRama k [] =
+    error ("No existe una rama para " ++ k)
+
+buscarRama k (rama@(k', _, _) : ramas)
+    | k == k'   = rama
+    | otherwise = buscarRama k ramas
+
 -- Pregunta 4 --
 {-
 
@@ -73,19 +82,33 @@ Por ejemplo, la expresión x y la tabla [x, y := y, z]:
 
 evalParcial :: Exp -> Weak
 
-evalParcial (Cons k es) = ConstanteW k es
+evalParcial (Cons k es) = 
+    ConstanteW k es
 
-evalParcial (Func x es) = FuncionW x es
+evalParcial (Func x es) = 
+    FuncionW x es
 
-evalParcial (Apl e1 e2) = undefined
+evalParcial (Apl e1 e2) = 
+    case evalParcial e1 of
+        FuncionW x e3 -> evalParcial (efecto e3 [(x,e2)]);
+        ConstanteW k es -> ConstanteW k (es ++ [e2])
 
-evalParcial (Case e b) = undefined
+evalParcial (Case e ramas) = 
+    case evalParcial e of 
+        ConstanteW k es -> 
+            case buscarRama k ramas of
+                (_, xs, cuerpo) -> evalParcial (efecto cuerpo (zip xs es))
 
-evalParcial (Rec x e) = undefined
+evalParcial (Rec x e) = 
+    evalParcial (efecto e [(x, Rec x e)])
+
 
 
 -- Ej 6 --
 
 evalFuerte :: Exp -> Val
-evalFuerte e = undefined
+evalFuerte e = case evalParcial e of
+    ConstanteW k es -> ConstanteV k (map evalFuerte es)
+    FuncionW x e' -> FuncionV x e'
+    
 
