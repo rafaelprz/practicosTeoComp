@@ -2,11 +2,12 @@ module P1 where
 
 -- 1
 data Exp = Var X
-    | Cons K [Exp]
+    | Const K [Exp]
     | Func X Exp
     | Apl Exp Exp
     | Case Exp [B]
     | Rec X Exp
+    deriving Show
 
 type X = String
 type K = String
@@ -17,9 +18,11 @@ type B = (K, [X], Exp)
 
 data Val = ConstanteV K [Val]
     | FuncionV X Exp
+    deriving Show
 
 data Weak = ConstanteW K [Exp]
     | FuncionW X Exp
+    deriving Show
 
 
 -- 3
@@ -31,8 +34,8 @@ efecto :: Exp -> Sustitucion -> Exp
 efecto (Var x) sigma = 
     busqueda x sigma
 
-efecto (Cons k exps) sigma = 
-    Cons k (map (\e -> efecto e sigma) exps)
+efecto (Const k exps) sigma = 
+    Const k (map (\e -> efecto e sigma) exps)
 
 efecto (Func x e) sigma = 
     Func x (efecto e (bajas [x] sigma))
@@ -82,7 +85,7 @@ Por ejemplo, la expresión x y la tabla [x, y := y, z]:
 
 evalParcial :: Exp -> Weak
 
-evalParcial (Cons k es) = 
+evalParcial (Const k es) = 
     ConstanteW k es
 
 evalParcial (Func x es) = 
@@ -90,7 +93,7 @@ evalParcial (Func x es) =
 
 evalParcial (Apl e1 e2) = 
     case evalParcial e1 of
-        FuncionW x e3 -> evalParcial (efecto e3 [(x,e2)]);
+        FuncionW x e3 -> evalParcial (efecto e3 [(x,e2)])
         ConstanteW k es -> ConstanteW k (es ++ [e2])
 
 evalParcial (Case e ramas) = 
@@ -111,4 +114,32 @@ evalFuerte e = case evalParcial e of
     ConstanteW k es -> ConstanteV k (map evalFuerte es)
     FuncionW x e' -> FuncionV x e'
     
+
+-- Ej 7 --
+
+-- hs --
+orChi :: Exp
+orChi = Func "b1" (
+            Func "b2" ((Case (Var "b1"))[
+                ("True", [], Const "True" []),
+                ("False", [], Var "b2")
+            ])
+    )
+    
+sumaChi :: Exp
+sumaChi = Rec "suma" (Func "a" 
+        (Func "b" 
+            (Case (Var "a") [
+                ("O", [], Var "b"),
+                ("S", ["x"], Const "S" [Apl (Apl (Var "suma")(Var "x")) (Var "b")])
+            ])
+        )
+    )
+
+tripleChi :: Exp
+tripleChi = Rec "triple" (Func "n" (Case (Var "n") [
+            ("O",[], Const "O" []),
+            ("S", ["x"], ((Apl (sumaChi) (Apl (Apl (Var "triple")(Var "x"))(Const "S" [Const "S" [Const "S" [Const "O" []]]])))))
+        ])
+    )
 

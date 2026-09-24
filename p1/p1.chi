@@ -1,0 +1,21 @@
+
+OR = \b1. \b2. case b1 of [
+    True -> [] True []
+    False -> [] b2 
+]
+
+SUMA = rec suma. \a \b. case a of [
+    O -> [] b
+    S -> [x] S [suma x b]
+]
+
+TRIPLE = rec triple. \n. case n of [
+    O -> [] O []
+    S -> [x] SUMA (triple x) 3  // donde dice SUMA en realidad iria todo el codigo de SUMA
+]
+
+DUPLICAR = rec duplicar. \l. case n of [
+    Nil -> [] Nil []
+    Cons -> [x,xs] Cons [x, Cons [x, (duplicar xs)]]
+]
+
