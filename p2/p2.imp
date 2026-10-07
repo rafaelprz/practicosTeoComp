@@ -1,0 +1,23 @@
+
+
+Not: 
+// precondicion: la variable b tiene un booleano en memoria
+// post: dejo el resultado de negar b en res
+
+case b of [
+    True [] -> res := False [],
+    False [] -> res := False []
+]
+
+Par:
+// pre: la variable n tiene un nat
+// pos: dejo el resultado de si n es par en res2
+local n' {
+    n', res2 := n, True[];
+    while n' is [
+        S [x] -> n' := x; case res2 of [
+                            True[] -> res2 := False[],
+                            False[] -> res2 := True[],
+                        ]
+    ]
+}
