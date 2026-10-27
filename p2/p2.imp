@@ -21,3 +21,47 @@ local n' {
                         ]
     ]
 }
+
+Suma: 
+// n1 y n2 nat
+// pos: dejo el resultado en res
+local [n'] {
+    n', res := n1, n2;
+    while n' is [
+        S [x] -> n', res := x, S [res]
+    ]
+}
+
+Largo:
+local [l] {
+    [l, res] := [list, O []] ;
+    while l is [
+        Cons [h,t] -> l := t ; res := S [res]
+    ]
+}
+
+igualdadN :
+local [n'] {
+    n', n'', res := n1, n2, True[];
+    while n' is [
+        S [x] -> case n '' is [
+            S [y] -> n', n'':= x, y;
+            O [] -> n' := O []; res := False[];
+        ]
+    ];
+    case n'' is [
+        S [y] -> res := False [],
+        O [] -> res := res
+    ];
+}
+
+concat:
+local [l, rev] {
+    l, rev, res := l1, Nil[], l2;
+    while l is [
+        Cons [h,t] -> l, rev := t, Cons [h, rev]
+    ];
+    while rev is [
+        Cons [h, t] -> rev, res := t, Cons [h, res]
+    ]
+}

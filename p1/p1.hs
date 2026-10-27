@@ -143,3 +143,13 @@ tripleChi = Rec "triple" (Func "n" (Case (Var "n") [
         ])
     )
 
+duplicarChi :: Exp
+duplicarChi = Rec "duplicar" (Func "l" 
+        (
+        Case (Var "l") [
+            ("Nil", [], Const "Nil" []),
+            ("Cons", ["x","xs"], Const "Cons" [Var "x", Const "Cons" [Var "x", (Apl (Var "duplicar")(Var "xs"))]])
+            ]
+        )
+    )
+
