@@ -5,6 +5,8 @@ data Prog = Assign [X] [Exp]
         | Secuencia Prog Prog
         | Case X [B]
         | While X [B] 
+        | Def F [X] X Prog -- def f (parametros) returns retorno { cuerpo }
+        | Call F [Exp] X   -- f (argumentos) on destino
         deriving Show
 
 
@@ -13,6 +15,10 @@ data Exp = Const K [Exp] | Var X deriving Show
 type B = (K, [X], Prog)
 type K = String
 type X = String
+type F = String
+
+-- Cada entrada de Delta guarda nombre, parametros, retorno y cuerpo.
+type Entorno = [(F, [X], X, Prog)]
 
 data Val = ConstV K [Val] | Null deriving Show
 type Memoria = [(X, Val)]

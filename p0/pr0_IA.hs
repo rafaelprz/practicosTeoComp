@@ -22,8 +22,8 @@ data Val = Boolean Bool | Conj [Z]
 type Memoria a b = [(a, b)]
 -- 3.2
 lkup :: Eq a => a -> Memoria a b -> b
-lkup k [] -> error "not found"
-lkup k ((k1, v1):kvs) = 
+lkup k [] -= error "not found"
+lkup k ((k1, v1):kvs) 
     | k == k1 = v1
     | otherwise = lkup k kvs
 -- 3.3
